@@ -1,52 +1,51 @@
-http {
-	upstream app_server {
-		server localhost:5678 fail_timeout=0;
-	}
+upstream app_server {
+	server localhost:5678 fail_timeout=0;
+}
 
-	server {
-		
-		listen <%= ENV["PORT"] %>;
-		server_name _;
-		keepalive_timeout 5;
-		
-		auth_request /validate;
+server {
+	
+	listen <%= ENV["PORT"] %>;
+	server_name _;
+	keepalive_timeout 5;
+	
+	auth_request /validate;
 
-		location = /validate {
-		      # forward the /validate request to Vouch Proxy
-		      proxy_pass <%= ENV["VOUCH_URL"] %>/validate;
-		      # be sure to pass the original host header
-		      #proxy_set_header Host $http_host;
+	location = /validate {
+			# forward the /validate request to Vouch Proxy
+			proxy_pass <%= ENV["VOUCH_URL"] %>/validate;
+			# be sure to pass the original host header
+			#proxy_set_header Host $http_host;
 
-		      # Vouch Proxy only acts on the request headers
-		      proxy_pass_request_body off;
-		      proxy_set_header Content-Length "";
+			# Vouch Proxy only acts on the request headers
+			proxy_pass_request_body off;
+			proxy_set_header Content-Length "";
 
-		      # optionally add X-Vouch-User as returned by Vouch Proxy along with the request
-		      auth_request_set $auth_resp_x_vouch_user $upstream_http_x_vouch_user;
-		      proxy_set_header X-Real-IP $remote_addr;
-  		      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-  		      proxy_set_header X-Forwarded-Proto $scheme;
+			# optionally add X-Vouch-User as returned by Vouch Proxy along with the request
+			auth_request_set $auth_resp_x_vouch_user $upstream_http_x_vouch_user;
+			proxy_set_header X-Real-IP $remote_addr;
+			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+			proxy_set_header X-Forwarded-Proto $scheme;
 
 
-		      # optionally add X-Vouch-IdP-Claims-* custom claims you are tracking
-		      #    auth_request_set $auth_resp_x_vouch_idp_claims_groups $upstream_http_x_vouch_idp_claims_groups;
-		      #    auth_request_set $auth_resp_x_vouch_idp_claims_given_name $upstream_http_x_vouch_idp_claims_given_name;
-		      # optinally add X-Vouch-IdP-AccessToken or X-Vouch-IdP-IdToken
-		      #    auth_request_set $auth_resp_x_vouch_idp_accesstoken $upstream_http_x_vouch_idp_accesstoken;
-		      #    auth_request_set $auth_resp_x_vouch_idp_idtoken $upstream_http_x_vouch_idp_idtoken;
+			# optionally add X-Vouch-IdP-Claims-* custom claims you are tracking
+			#    auth_request_set $auth_resp_x_vouch_idp_claims_groups $upstream_http_x_vouch_idp_claims_groups;
+			#    auth_request_set $auth_resp_x_vouch_idp_claims_given_name $upstream_http_x_vouch_idp_claims_given_name;
+			# optinally add X-Vouch-IdP-AccessToken or X-Vouch-IdP-IdToken
+			#    auth_request_set $auth_resp_x_vouch_idp_accesstoken $upstream_http_x_vouch_idp_accesstoken;
+			#    auth_request_set $auth_resp_x_vouch_idp_idtoken $upstream_http_x_vouch_idp_idtoken;
 
-		      # these return values are used by the @error401 call
-		      auth_request_set $auth_resp_jwt $upstream_http_x_vouch_jwt;
-		      auth_request_set $auth_resp_err $upstream_http_x_vouch_err;
-		      auth_request_set $auth_resp_failcount $upstream_http_x_vouch_failcount;
-	        }
-
-		# if validate returns `401 not authorized` then forward the request to the error401block
-		error_page 401 = @error401;
-
-		location @error401 {
-			# redirect to Vouch Proxy for login
-			return 302 <%= ENV["VOUCH_URL"] %>/login?url=https://$http_host$request_uri&vouch-failcount=$auth_resp_failcount&X-Vouch-Token=$auth_resp_jwt&error=$auth_resp_err;
+			# these return values are used by the @error401 call
+			auth_request_set $auth_resp_jwt $upstream_http_x_vouch_jwt;
+			auth_request_set $auth_resp_err $upstream_http_x_vouch_err;
+			auth_request_set $auth_resp_failcount $upstream_http_x_vouch_failcount;
 		}
+
+	# if validate returns `401 not authorized` then forward the request to the error401block
+	error_page 401 = @error401;
+
+	location @error401 {
+		# redirect to Vouch Proxy for login
+		return 302 <%= ENV["VOUCH_URL"] %>/login?url=https://$http_host$request_uri&vouch-failcount=$auth_resp_failcount&X-Vouch-Token=$auth_resp_jwt&error=$auth_resp_err;
 	}
 }
+
