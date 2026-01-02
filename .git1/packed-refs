@@ -1,7 +1,0 @@
-# pack-refs with: peeled fully-peeled sorted 
-e27a6eece1924615b3f61c30434776a364dc8953 refs/remotes/origin/main
-207eb488388fdae8cdc5a37a96a2d4e2905ff7f5 refs/remotes/origin/task/update-scalingo-test
-2ba6cae9018db4abaeb07691519b39bb3147ca84 refs/remotes/origin/updt
-85c8568647452762b9447964a6788455049eae70 refs/tags/v0.101.0
-^7deb015abeec31c036b52da887fa1cbbeac54bca
-dcb82ddfb5f2ba5d531f9dc8d7d6fc7f0c7f5bb6 refs/tags/v0.119.0
