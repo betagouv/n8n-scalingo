@@ -4,6 +4,8 @@
 
 ![Screenshot n8n](./docs/assets/n8n_screenshot.png)
 
+With [oauth2-proxy](https://oauth2-proxy.github.io/oauth2-proxy/) filter, see usage example on https://github.com/betagouv/oauth2-deploy-demo
+
 ## Installation
 
 ### 1. Declare a new application in Scalingo
@@ -12,11 +14,11 @@
 2. Add PostgreSQL (officially recommended by n8n) addon
 3. Define and configure required environment variables (cf. below)
 4. (bonus) Activate "Force HTTPS" in Scalingo app settings
-5. (bonus) Link your domain name to the app (in "Domain/DSL" section into the Scalingo app dashboard) 
+5. (bonus) Link your domain name to the app (in "Domain/DSL" section into the Scalingo app dashboard)
 
 ### 2. Deploy n8n application into your app
 
-It is recommended to use [Scalingo archive deployment](https://doc.scalingo.com/platform/deployment/deploy-from-archive) instead of code source deployment because we want to install a *finished product* (but if you want, you can).
+It is recommended to use [Scalingo archive deployment](https://doc.scalingo.com/platform/deployment/deploy-from-archive) instead of code source deployment because we want to install a _finished product_ (but if you want, you can).
 
 > **Good to know!** GitHub allows downloading ZIP files and tarballs for each release of each repository that allows it. Ex: https://github.com/jbuget/n8n-scalingo/archive/v0.101.0.zip
 
@@ -30,7 +32,7 @@ scalingo --app my-n8n-app deploy https://github.com/jbuget/n8n-scalingo/archive/
 
 ### 1. Required configuration
 
-Running n8n on Scalingo requires at least to **link Scalingo app port (randomly attributed) to n8n internal server**. Long words, short step. 
+Running n8n on Scalingo requires at least to **link Scalingo app port (randomly attributed) to n8n internal server**. Long words, short step.
 
 Just add the following environment variable: `N8N_PORT=$PORT`.
 
@@ -63,6 +65,7 @@ N8N_PROTOCOL=https
 ### 4. Other stuff
 
 Configuring n8n through Scalingo is as easy as:
+
 1. read [the official documentation](https://docs.n8n.io/reference/configuration.html) and
 2. define the environment variables you need [into your Scalingo application](https://doc.scalingo.com/platform/app/environment).
 
@@ -74,7 +77,7 @@ Just deploy a new release archive as described above with Scalingo deploy servic
 
 In this repository, we will [release a new version](https://github.com/jbuget/n8n-scalingo/tags) each time the offical n8n team will.
 
-> **Good to know!** The only thing we have to do, is to bump the fixed version of n8n dependency in the package.json (with its lock file). You can even provide a Pull Request to help us!  
+> **Good to know!** The only thing we have to do, is to bump the fixed version of n8n dependency in the package.json (with its lock file). You can even provide a Pull Request to help us!
 
 Even the database migration scripts are run automatically if necessary at the app startup. 😎
 
